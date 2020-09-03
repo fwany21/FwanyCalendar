@@ -1,9 +1,13 @@
-err_insufficient_resourcesconst express = require("express");
+const express = require("express");
 const mysql = require("mysql");
+const database = require('./database');
 const app = express();
 const PORT = 5000;
 
-app.get("/data", (req, res) => {
+database.open();
+app.get("/data", async (req, res) => {
+  const result = await database.select('test', '*');
+  console.log(`DB = ${result}`);
   const data = {
     lastname: "Fwany2",
     firstname: "Kim",
@@ -15,16 +19,20 @@ app.listen(PORT, () => {
   console.log(`server running on PORT ${PORT}`);
 });
 
-var connection = mysql.createConnection({
-  host: "10.253.70.45",
-  user: "warms",
-  password: "wificore1%",
-  database: "react_prac",
-});
+// function getDBSchedule() {
+//   console.log("getDBSchedule");
+//   const connection = mysql.createConnection({
+//     host: "10.253.70.45",
+//     user: "warms",
+//     password: "wificore1%",
+//     database: "react_prac",
+//   });
+  
+//   connection.connect();
+//   connection.query("SELECT * FROM test", function (error, results, fields) {
+//     if (error) throw error;
+//     console.log("The solution is: ", results);
+//   });
+//   connection.end();
+// }
 
-connection.connect();
-connection.query("SELECT * FROM test", function (error, results, fields) {
-  if (error) throw error;
-  console.log("The solution is: ", results);
-});
-connection.end();
