@@ -1,0 +1,19 @@
+{
+  "name": "fwanycalendar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server" : "nodemon server.js",
+    "front" : "cd front && npm start",
+    "dev" : "concurrently \"npm run server\" \"npm run front\""
+  },
+  "author": "Fwany",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^5.3.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4"
+  }
+}
