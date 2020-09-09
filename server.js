@@ -9,16 +9,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.get("/data", async (req, res) => {
   const result = await database.select("test", "*");
-  // const data = {
-  //   lastname: "Fwany2",
-  //   firstname: "Kim",
-  // };
   const scheduleData = result.out;
 
   for (let i = 0; i < scheduleData.length; i += 1) {
     scheduleData[i].id = scheduleData[i].id.toString();
   }
   res.json(scheduleData);
+});
+
+app.get("/countData", async (req, res) => {
+  const highResult = await database.select("test", "*", false , "" , "id DESC", "1");
+  const latestCount = highResult.out[0].id;
+
+  res.json(latestCount);
 });
 
 app.listen(PORT, () => {
@@ -30,9 +33,18 @@ app.post("/register", async (req, res) => {
   console.log(req.body.start);
   console.log(req.body.end);
   console.log(req.body.id);
-  await database.insert(
+  const result = await database.insert(
     "test",
-    `${req.body.title}, ${req.body.start}, ${req.body.end}`
+    `${req.body.id}, ${req.body.title}, ${req.body.start}, ${req.body.end}`
+  );
+});
+
+app.post("/unregister", async (req, res) => {
+  console.log("Remove id = " + req.body.id);
+  console.log("Remove title = " + req.body.title);
+  await database.delete(
+    "test",
+    `id = ${req.body.id}`
   );
 });
 

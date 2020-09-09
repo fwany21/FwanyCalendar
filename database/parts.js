@@ -5,9 +5,7 @@ async function getColumns(connection, table) {
   try {
     const queryRet = (await connection.query(sql))[0];
     for (let i = 0; i < queryRet.length; i += 1) {
-      if (queryRet[i].Field !== 'id') {
         column.push(queryRet[i].Field);
-      }
     }
     return column;
   } catch (err) {

@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 // import createEventId from "./event-utils";
-import axios from 'axios';
+import axios from "axios";
 // import Data from './Data';
 
 class App extends Component {
@@ -12,11 +12,16 @@ class App extends Component {
     data: [],
     weekendsVisible: true,
     currentEvents: [],
+    latestCount: 0,
   };
   componentDidMount() {
     fetch("/data")
       .then((res) => res.json())
       .then((result) => this.setState({ data: result }));
+
+    fetch("/countData")
+      .then((res) => res.json())
+      .then((result) => this.setState({ latestCount: result }));
   }
 
   render() {
@@ -41,6 +46,7 @@ class App extends Component {
           eventClick={this.handleEventClick}
           eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
           eventAdd={this.handleDataAdded}
+          eventRemove={this.handleDataRemove}
           /* you can update a remote database when these fire:
             
             eventChange={function(){}}
@@ -56,15 +62,27 @@ class App extends Component {
     });
   };
 
+  handleDataRemove = (removeInfo) => {
+    axios
+      .post("/unregister", removeInfo.event)
+      .then(() => console.log("unregister Data"))
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   handleDateSelect = (selectInfo) => {
-    let title = prompt("Please enter a new title for your event");
+    let title = prompt("Please enter a new title for yo ur event");
     let calendarApi = selectInfo.view.calendar;
 
     calendarApi.unselect(); // clear date selection
+    this.setState({
+      latestCount: this.state.latestCount + 1,
+    });
 
     if (title) {
       calendarApi.addEvent({
-        id: "",
+        id: this.state.latestCount.toString(),
         title,
         start: selectInfo.startStr,
         end: selectInfo.endStr,
@@ -75,12 +93,13 @@ class App extends Component {
 
   handleDataAdded = (addInfo) => {
     console.log("add Data");
-    console.log(addInfo.event.title);
-    axios.post('/register', addInfo.event)
-    .then(() => console.log("register Data"))
-    .catch(err => {
-      console.error(err);
-    });
+    console.log(addInfo.event.id);
+    axios
+      .post("/register", addInfo.event)
+      .then(() => console.log("register Data"))
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   handleEventClick = (clickInfo) => {
