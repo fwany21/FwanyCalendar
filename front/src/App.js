@@ -1,19 +1,17 @@
 import React, { Component } from "react";
-import FullCalendar, { formatDate } from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from './event-utils'
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+// import createEventId from "./event-utils";
+import axios from 'axios';
 // import Data from './Data';
 
 class App extends Component {
   state = {
-    data: {
-      firstname: null,
-      lastname: null,
-    },
+    data: [],
     weekendsVisible: true,
-    currentEvents: []
+    currentEvents: [],
   };
   componentDidMount() {
     fetch("/data")
@@ -22,78 +20,84 @@ class App extends Component {
   }
 
   render() {
-    const { data } = this.state;
     return (
       <div>
         <FullCalendar
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            headerToolbar={{
-              left: 'prev,next today',
-              center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            }}
-            initialView='dayGridMonth'
-            editable={true}
-            selectable={true}
-            selectMirror={true}
-            dayMaxEvents={true}
-            weekends={this.state.weekendsVisible}
-            // initialEvents={config.SAVED_EVENT} // alternatively, use the `events` setting to fetch from a feed
-            select={this.handleDateSelect}
-            eventContent={renderEventContent} // custom render function
-            eventClick={this.handleEventClick}
-            eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
-            eventAdd={this.handleDataAdded}
-            /* you can update a remote database when these fire:
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          }}
+          initialView="dayGridMonth"
+          editable={true}
+          selectable={true}
+          selectMirror={true}
+          dayMaxEvents={true}
+          weekends={this.state.weekendsVisible}
+          events={this.state.data} // alternatively, use the `events` setting to fetch from a feed
+          select={this.handleDateSelect}
+          eventContent={renderEventContent} // custom render function
+          eventClick={this.handleEventClick}
+          eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
+          eventAdd={this.handleDataAdded}
+          /* you can update a remote database when these fire:
             
             eventChange={function(){}}
             eventRemove={function(){}}
             */
-          />
+        />
       </div>
     );
   }
   handleWeekendsToggle = () => {
     this.setState({
-      weekendsVisible: !this.state.weekendsVisible
-    })
-  }
+      weekendsVisible: !this.state.weekendsVisible,
+    });
+  };
 
   handleDateSelect = (selectInfo) => {
-    let title = prompt('Please enter a new title for your event')
-    let calendarApi = selectInfo.view.calendar
+    let title = prompt("Please enter a new title for your event");
+    let calendarApi = selectInfo.view.calendar;
 
-    calendarApi.unselect() // clear date selection
+    calendarApi.unselect(); // clear date selection
 
     if (title) {
       calendarApi.addEvent({
-        id: createEventId(),
+        id: "",
         title,
         start: selectInfo.startStr,
         end: selectInfo.endStr,
-        allDay: selectInfo.allDay
-      })
+        allDay: selectInfo.allDay,
+      });
     }
-  }
+  };
 
   handleDataAdded = (addInfo) => {
+    console.log("add Data");
     console.log(addInfo.event.title);
-    // (async () => {
-    //   await writeJsonFile(config.SAVED_EVENT, {foo: true});
-    // })();
-  }
+    axios.post('/register', addInfo.event)
+    .then(() => console.log("register Data"))
+    .catch(err => {
+      console.error(err);
+    });
+  };
 
   handleEventClick = (clickInfo) => {
-    if (window.confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-      clickInfo.event.remove()
+    if (
+      window.confirm(
+        `Are you sure you want to delete the event '${clickInfo.event.title}'`
+      )
+    ) {
+      clickInfo.event.remove();
     }
-  }
+  };
 
   handleEvents = (events) => {
     this.setState({
-      currentEvents: events
-    })
-  }
+      currentEvents: events,
+    });
+  };
 }
 
 // function App() {
@@ -121,6 +125,6 @@ function renderEventContent(eventInfo) {
       <b>{eventInfo.timeText}</b>
       <i>{eventInfo.event.title}</i>
     </>
-  )
+  );
 }
 export default App;
