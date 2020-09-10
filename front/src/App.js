@@ -39,6 +39,7 @@ class App extends Component {
             weekends={this.state.weekendsVisible}
             events={this.state.data} // alternatively, use the `events` setting to fetch from a feed
             select={this.handleDateSelect}
+            dateClick={this.handleDateClick}
             eventContent={renderEventContent} // custom render function
             eventClick={this.handleEventClick}
             eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
@@ -54,6 +55,33 @@ class App extends Component {
       </div>
     );
   }
+  handleDateClick = (arg) => { // bind with an arrow function
+    let title = prompt("Please enter a new title for your event");
+    let calendarApi = arg.view.calendar;
+
+    calendarApi.unselect(); // clear date selection
+
+    if (title) {
+      fetch("/countData")
+        .then((res) => res.json())
+        .then((result) => this.setState({ latestCount: result }))
+        .then(() =>
+          this.setState({
+            latestCount: this.state.latestCount + 1,
+          })
+        )
+        .then(() =>
+          calendarApi.addEvent({
+            id: this.state.latestCount.toString(),
+            title,
+            start: arg.dateStr,
+            end: arg.dateStr,
+            allDay: arg.allDay,
+          })
+        );
+    }
+  }
+
   handleWeekendsToggle = () => {
     this.setState({
       weekendsVisible: !this.state.weekendsVisible,
