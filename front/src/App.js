@@ -22,33 +22,35 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          headerToolbar={{
-            left: "prev,next today",
-            center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay",
-          }}
-          initialView="dayGridMonth"
-          editable={true}
-          selectable={true}
-          selectMirror={true}
-          dayMaxEvents={true}
-          weekends={this.state.weekendsVisible}
-          events={this.state.data} // alternatively, use the `events` setting to fetch from a feed
-          select={this.handleDateSelect}
-          eventContent={renderEventContent} // custom render function
-          eventClick={this.handleEventClick}
-          eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
-          eventAdd={this.handleDataAdded}
-          eventRemove={this.handleDataRemove}
-          /* you can update a remote database when these fire:
+      <div className="demo-app">
+        <div className="demo-app-main">
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            initialView="dayGridMonth"
+            editable={true}
+            selectable={true}
+            selectMirror={true}
+            dayMaxEvents={true}
+            weekends={this.state.weekendsVisible}
+            events={this.state.data} // alternatively, use the `events` setting to fetch from a feed
+            select={this.handleDateSelect}
+            eventContent={renderEventContent} // custom render function
+            eventClick={this.handleEventClick}
+            eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
+            eventAdd={this.handleDataAdded}
+            eventRemove={this.handleDataRemove}
+            /* you can update a remote database when these fire:
             
             eventChange={function(){}}
             eventRemove={function(){}}
             */
-        />
+          />
+        </div>
       </div>
     );
   }
