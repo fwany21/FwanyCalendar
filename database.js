@@ -4,10 +4,10 @@ const parts = require("./database/parts");
 const query = {
   open() {
     const pool = core.open({
-      host: "10.253.70.45",
-      user: "warms",
-      password: "wificore1%",
-      database: "react_prac",
+      host: "us-cdbr-east-02.cleardb.com",
+      user: "b4925a8f8d8935",
+      password: "faf008fd",
+      database: "heroku_88beae79d324036",
     });
     this.pool = pool;
   },
