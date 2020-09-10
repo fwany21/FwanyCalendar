@@ -8,7 +8,7 @@
     "server": "nodemon server.js",
     "front": "cd front && npm start",
     "dev": "concurrently \"npm run server\" \"npm run front\"",
-    "heroku-postbuild": "cd front && npm install && npm run build"
+    "heroku-postbuild": "npm install && cd front && npm install && npm run build"
   },
   "author": "Fwany",
   "license": "ISC",
