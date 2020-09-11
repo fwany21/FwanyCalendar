@@ -17,7 +17,7 @@ class App extends Component {
   componentDidMount() {
     fetch("/data")
       .then((res) => res.json())
-      .then((data) => this.setState({ data }));
+      .then((event) => this.setState({ data: event }));
   }
 
   render() {
@@ -55,32 +55,65 @@ class App extends Component {
       </div>
     );
   }
-  handleDateClick = (arg) => { // bind with an arrow function
-    let title = prompt("Please enter a new title for your event");
-    let calendarApi = arg.view.calendar;
+  handleDateSelect = (arg) => {
+    let tempDate = new Date(arg.start.getTime());
+    tempDate.setDate(tempDate.getDate() + 1);
+    if (arg.end.getTime() !== tempDate.getTime()) {
+      let title = prompt("Please enter a new title for your event");
+      let calendarApi = arg.view.calendar;
 
-    calendarApi.unselect(); // clear date selection
+      calendarApi.unselect(); // clear date selection
 
-    if (title) {
-      fetch("/countData")
-        .then((res) => res.json())
-        .then((result) => this.setState({ latestCount: result }))
-        .then(() =>
-          this.setState({
-            latestCount: this.state.latestCount + 1,
-          })
-        )
-        .then(() =>
-          calendarApi.addEvent({
-            id: this.state.latestCount.toString(),
-            title,
-            start: arg.dateStr,
-            end: arg.dateStr,
-            allDay: arg.allDay,
-          })
-        );
+      if (title) {
+        fetch("/countData")
+          .then((res) => res.json())
+          .then((result) => this.setState({ latestCount: result }))
+          .then(() =>
+            this.setState({
+              latestCount: this.state.latestCount + 1,
+            })
+          )
+          .then(() =>
+            calendarApi.addEvent({
+              id: this.state.latestCount.toString(),
+              title,
+              start: arg.startStr,
+              end: arg.endStr,
+              allDay: arg.allDay,
+            })
+          );
+      }
     }
-  }
+  };
+
+  handleDateClick = (arg) => {
+    if (arg.hasOwnProperty("dateStr") === true) {
+      let title = prompt("Please enter a new title for your event");
+      let calendarApi = arg.view.calendar;
+
+      calendarApi.unselect(); // clear date selection
+
+      if (title) {
+        fetch("/countData")
+          .then((res) => res.json())
+          .then((result) => this.setState({ latestCount: result }))
+          .then(() =>
+            this.setState({
+              latestCount: this.state.latestCount + 1,
+            })
+          )
+          .then(() =>
+            calendarApi.addEvent({
+              id: this.state.latestCount.toString(),
+              title,
+              start: arg.dateStr,
+              end: arg.dateStr,
+              allDay: arg.allDay,
+            })
+          );
+      }
+    }
+  };
 
   handleWeekendsToggle = () => {
     this.setState({
@@ -95,33 +128,6 @@ class App extends Component {
       .catch((err) => {
         console.error(err);
       });
-  };
-
-  handleDateSelect = (selectInfo) => {
-    let title = prompt("Please enter a new title for your event");
-    let calendarApi = selectInfo.view.calendar;
-
-    calendarApi.unselect(); // clear date selection
-
-    if (title) {
-      fetch("/countData")
-        .then((res) => res.json())
-        .then((result) => this.setState({ latestCount: result }))
-        .then(() =>
-          this.setState({
-            latestCount: this.state.latestCount + 1,
-          })
-        )
-        .then(() =>
-          calendarApi.addEvent({
-            id: this.state.latestCount.toString(),
-            title,
-            start: selectInfo.startStr,
-            end: selectInfo.endStr,
-            allDay: selectInfo.allDay,
-          })
-        );
-    }
   };
 
   handleDataAdded = (addInfo) => {
