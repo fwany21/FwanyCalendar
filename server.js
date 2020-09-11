@@ -48,6 +48,7 @@ app.post("/register", async (req, res) => {
     "test",
     `${req.body.id}, ${req.body.title}, ${req.body.start}, ${req.body.end}`
   );
+  res.send();
 });
 
 app.post("/unregister", async (req, res) => {
@@ -57,6 +58,7 @@ app.post("/unregister", async (req, res) => {
     "test",
     `id = ${req.body.id}`
   );
+  res.send();
 });
 
 // function getDBSchedule() {

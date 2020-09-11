@@ -58,7 +58,12 @@ class App extends Component {
   handleDateSelect = (arg) => {
     fetch("/data")
       .then((res) => res.json())
-      .then((event) => this.setState({ data: event }));
+      .then((event) => {
+        arg.view.calendar.removeAllEvents();
+        arg.view.calendar.refetchEvents();
+        this.setState({ data: event });
+      });
+
     let tempDate = new Date(arg.start.getTime());
     tempDate.setDate(tempDate.getDate() + 1);
     if (arg.end.getTime() !== tempDate.getTime()) {
@@ -90,9 +95,6 @@ class App extends Component {
   };
 
   handleDateClick = (arg) => {
-    fetch("/data")
-      .then((res) => res.json())
-      .then((event) => this.setState({ data: event }));
     if (arg.hasOwnProperty("dateStr") === true) {
       let title = prompt("Please enter a new title for your event");
       let calendarApi = arg.view.calendar;
