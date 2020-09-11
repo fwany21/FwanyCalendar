@@ -150,6 +150,13 @@ class App extends Component {
   };
 
   handleEventClick = (clickInfo) => {
+    fetch("/data")
+      .then((res) => res.json())
+      .then((event) => {
+        clickInfo.view.calendar.removeAllEvents();
+        clickInfo.view.calendar.refetchEvents();
+        this.setState({ data: event });
+      });
     if (
       window.confirm(
         `Are you sure you want to delete the event '${clickInfo.event.title}'`
