@@ -12,7 +12,6 @@ class App extends Component {
     data: [],
     weekendsVisible: true,
     currentEvents: [],
-    latestCount: 0,
   };
   componentDidMount() {
     fetch("/data")
@@ -73,17 +72,13 @@ class App extends Component {
       calendarApi.unselect(); // clear date selection
 
       if (title) {
+        let latestCount = 0;
         fetch("/countData")
           .then((res) => res.json())
-          .then((result) => this.setState({ latestCount: result }))
-          .then(() =>
-            this.setState({
-              latestCount: this.state.latestCount + 1,
-            })
-          )
+          .then((result) => {latestCount = result + 1 })
           .then(() =>
             calendarApi.addEvent({
-              id: this.state.latestCount.toString(),
+              id: latestCount.toString(),
               title,
               start: arg.startStr,
               end: arg.endStr,
@@ -102,17 +97,13 @@ class App extends Component {
       calendarApi.unselect(); // clear date selection
 
       if (title) {
+        let latestCount = 0;
         fetch("/countData")
           .then((res) => res.json())
-          .then((result) => this.setState({ latestCount: result }))
-          .then(() =>
-            this.setState({
-              latestCount: this.state.latestCount + 1,
-            })
-          )
+          .then((result) => latestCount = result + 1 )
           .then(() =>
             calendarApi.addEvent({
-              id: this.state.latestCount.toString(),
+              id: latestCount.toString(),
               title,
               start: arg.dateStr,
               end: arg.dateStr,
